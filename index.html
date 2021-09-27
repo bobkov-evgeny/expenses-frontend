@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <div class="app-title">
+            <h1>Учет моих расходов</h1>
+        </div>
+
+        <form class="app-inputs">
+            <div class="app-first-input">
+                <label for="first-input">Куда было потрачено:</label>
+                <input type="text" id="first-input" placeholder="Куда было потрачено">
+            </div>
+
+            <div class="app-second-input">
+                <label for="second-input">Сколько было потрачено:</label>
+                <input type="text" id="second-input" placeholder="Сколько было потрачено">
+            </div>
+
+            <input class="app-input-button" type="submit" value="Добавить"/>
+        </form>
+
+        <div class="app-data-table">
+            <div class="app-data-total">
+                <span id="total"></span>
+            </div>
+            <div class="app-data-list">
+
+
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js" type="module"></script>
+</body>
+</html>
