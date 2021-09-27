@@ -65,8 +65,8 @@ function createElem (item)  {
     refuseBtn.style.display = 'none';
 
     refuseBtn.onclick = () => {
-        titleWrapper.replaceChild(elTitle, elTitleInput);
-        element.replaceChild(elAmount, elAmountInput);
+        titleWrapper.replaceChild(elTitle, inputWrapper);
+        element.replaceChild(elAmount, secondWrapper);
         saveBtn.style.display = 'none';
         refuseBtn.style.display = 'none'
         editBtn.style.display = 'block';
@@ -75,8 +75,8 @@ function createElem (item)  {
     deleteBtn.onclick = () => deleteExpense({_id: item._id, storeName: item.storeName, date: item.date, amount: item.amount});
 
     editBtn.addEventListener('click', () => {
-        titleWrapper.replaceChild(elTitleInput, elTitle);
-        element.replaceChild(elAmountInput, elAmount);
+        titleWrapper.replaceChild(inputWrapper, elTitle);
+        element.replaceChild(secondWrapper, elAmount);
         editBtn.style.display = 'none';
         saveBtn.style.display = 'block';
         refuseBtn.style.display = 'block'
@@ -97,18 +97,38 @@ function createElem (item)  {
     const fLabel = document.createElement('label');
     fLabel.textContent = 'test';
 
+    const inputWrapper = document.createElement('div');
+    inputWrapper.style.display = 'flex';
+    inputWrapper.style.flexDirection = 'column'
+    inputWrapper.style.position = 'relative';
+
+    const secondWrapper = document.createElement('div');
+    secondWrapper.style.display = 'flex';
+    secondWrapper.style.flexDirection = 'column';
+    secondWrapper.style.position = 'relative';
+
     const elTitleInput = document.createElement('input');
     elTitleInput.className = 'title-edit-input';
     elTitleInput.type = 'text';
     elTitleInput.placeholder = 'Название Магазина';
     elTitleInput.value = item.storeName;
+    elTitleInput.style.position = 'relative';
+    const inputLabel = document.createElement('label');
+    inputLabel.textContent = 'Куда было потрачено:'
+    inputLabel.className = 'input-label-edit';
 
     const elAmountInput = document.createElement('input');
     elAmountInput.className = 'amount-edit-input';
-    elAmountInput.type = 'text';
+    elAmountInput.type = 'number';
     elAmountInput.placeholder = 'Сколько было потрачено'
     elAmountInput.value = item.amount;
+    elAmountInput.style.position = 'relative';
+    const inputLabelSecond = document.createElement('label');
+    inputLabelSecond.textContent = 'Сколько было потрачено:'
+    inputLabelSecond.className = 'input-label-edit';
 
+    inputWrapper.append(inputLabel, elTitleInput);
+    secondWrapper.append(inputLabelSecond, elAmountInput)
     titleWrapper.append(elCounter, elTitle);
     elBtnList.append(saveBtn,refuseBtn, editBtn,deleteBtn)
     element.append(titleWrapper, elAmount, elBtnList);
@@ -132,21 +152,21 @@ async function renderExpenses () {
 
 async function addNewExpense (data) {
     try {
+
         const response = await fetch('http://localhost:9000/expenses', {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
             },
             body: JSON.stringify({
-                id: data._id,
                 storeName: data.storeName,
                 date: data.date,
                 amount: data.amount
             })
         });
-        console.log(await response.json());
+        console.log(await response.text());
     } catch (err) {
-        alert('Сервер недоступен. Попробуйте позже.');
+        console.log(err);
     } finally {
         await renderExpenses(allExpenses);
         input1.value = '';
@@ -155,25 +175,25 @@ async function addNewExpense (data) {
 }
 
 async function updateItemInfo (data) {
-    // {storeName: elTitleInput.value, date: item.date, amount: elAmountInput.value}
     try {
+        const item = {
+            id: data._id,
+            storeName: data.storeName,
+            date: data.date,
+            amount: data.amount
+        }
+
         const result = await fetch(`http://localhost:9000/expenses`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify({
-                id: data._id,
-                storeName: data.storeName,
-                date: data.date,
-                amount: data.amount
-            })
+            body: JSON.stringify(item)
         })
-        const response = await result.text();
+        console.log(result);
+        if(result.ok) await renderExpenses(allExpenses);
     } catch (err) {
-        alert('Сервер недоступен. Попробуйте позже.');
-    } finally {
-        await renderExpenses(allExpenses);
+        console.log(err);
     }
 }
 
@@ -191,7 +211,7 @@ async function deleteExpense (data) {
                 amount: data.amount
             })
         })
-        const response = await result.text();
+        console.log(await result.text());
     } catch (err) {
         alert('Сервер недоступен. Попробуйте позже.');
     } finally {
@@ -237,10 +257,5 @@ appInputs.addEventListener('submit', async (e) => {
     }
 })
 
-
-const number = 125;
-const func = num => {
-    const str = num.toString().split('');
-
-}
-func(number);
+const inputs = [input1, input2];
+inputs.forEach(input => input.addEventListener('keypress', () => input.style.border = 'none'))
